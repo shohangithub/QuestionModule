@@ -1,0 +1,114 @@
+﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable<Redlime.Modules.QuestionModule.Models.Question>>
+
+@using System.Text.RegularExpressions
+@using DotNetNuke.Web.Mvc.Helpers
+
+
+<div id="Questions-@Dnn.ModuleContext.ModuleId">
+    @if (Model == null || Model.Count() == 0)
+    {
+        <p>@Dnn.LocalizeString("NoItems")</p>
+    }
+    else
+    {
+        <a href="@Url.Action("Edit", "Question", new { ctl = "Edit",itemId = -1})">Add Question</a>
+        <ul class="tm_tl">
+            @foreach (var item in Model)
+            {
+                <li class="tm_t">
+
+                    <h3>@item.QuestionTitle</h3>
+                    <div class="tm_td">@item.QuestionType</div>
+                    @Dnn.ModuleContext.IsEditable
+                    @{
+                        if (Dnn.ModuleContext.IsEditable)
+                        {
+                            <div>
+                                <a href="@Url.Action("Edit", "Question", new {ctl = "Edit", itemId = item.Id})">@Dnn.LocalizeString("EditQuestion")</a>
+                                <a href="@Url.Action("Delete", "Question", new {itemId = item.Id})">@Dnn.LocalizeString("DeleteQuestion")</a>
+                            </div>
+                        }
+                    }
+                </li>
+            }
+        </ul>
+    }
+
+
+    <div id="add-form">
+        <div class="dnnForm dnnEditBasicSettings" id="dnnEditBasicSettings">
+            <div class="dnnFormExpandContent dnnRight "><a href="#">@Dnn.LocalizeString("ExpandAll")</a></div>
+
+            <h2 id="dnnSitePanel-BasicSettings" class="dnnFormSectionHead dnnClear">
+                <a href="#" class="dnnSectionExpanded">@Dnn.LocalizeString("BasicSettings")</a>
+            </h2>
+            <fieldset>
+                <div class="dnnFormItem">
+                    <div><label for="itemName">@Dnn.LocalizeString("lblName")</label></div>
+                    <input id="QuestionTitle" name="QuestionTitle" class="form-control" />
+                </div>
+                <div class="dnnFormItem">
+                    <div><label for="itemUser">@Dnn.LocalizeString("lblAssignedUser")</label></div>
+                    @Html.DropDownList("QuestionType")
+                </div>
+                <input type="hidden" id="Id" name="Id" class="" />
+                <input type="hidden" id="ModuleId" name="ModuleId" class="" />
+            </fieldset>
+        </div>
+        <button type="button" id="Submit" class="dnnPrimaryAction">@Dnn.LocalizeString("Submit")</button>
+        <a id="cancelEdit" href="#" class="dnnSecondaryAction">@Dnn.LocalizeString("Cancel")</a>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+        $(document).ready(function () {
+
+            var callForResponse = function () {
+                $.ajax({
+                    // type: 'get',
+                    //url: "/DesktopModules/MVC/YourModuleName/controllerName/actionName",
+                    url: "/DesktopModules/MVC/QuestionModule/Question/GetJsonResult",
+                    method: "Get",
+                    contentType: 'application/json',
+                    headers: {
+                        "ModuleId": @Dnn.ModuleContext.ModuleId,
+                        "TabId":@Dnn.ModuleContext.TabId,
+                        "RequestVerificationToken": $("input[name='__RequestVerificationToken']").val()
+                    },
+                    success: function (data) { console.log(data) },
+                    error: function () { }
+
+                });
+            }
+
+            callForResponse();
+
+        });
+
+    $('#Submit').on('click', function () {
+        var data = {
+            id: 1
+        };
+        $.ajax({
+            url: '/DesktopModules/MVC/QuestionModule/Question/GetTransactionInformation',
+            type: "POST",
+            data: JSON.stringify(data),
+            dataType: "JSON",
+            contentType: 'application/json; charset=utf-8',
+            headers: {
+                "ModuleId": @Dnn.ModuleContext.ModuleId,
+                "TabId":@Dnn.ModuleContext.TabId,
+                "RequestVerificationToken": $("input[name='__RequestVerificationToken']").val()
+            },
+            success: function (response) {
+                console.logresponse()
+                alert(response)
+            },
+            error: function (response) {
+            }
+        });
+    });
+
+</script>

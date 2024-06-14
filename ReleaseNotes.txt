@@ -1,0 +1,24 @@
+﻿<h3>QuestionModule</h3>
+<p class="Contributor">
+	Redlime Solutions <br />
+	<a href="mailto:modules@redlime.com">modules@redlime.com</a><br />
+	<a href=https://www.redlime.com/>https://www.redlime.com/</a><br />
+	This extension was created using <a href="https://www.christoc.com">Christoc's</a> Module Development Templates for DNN.
+</p>
+<hr/>
+<div class="License">
+	<h3>About the QuestionModule</h3>
+	<p class="Owner">
+		<b>Version CHANGEME</b><br /><br />
+	</p>
+	<p>Description about version.</p>
+	
+	<h4>Bug Fixes</h4>
+	<ul>
+			<li>List</li>
+			<li>of</li>
+			<li>bug</li>
+			<li>fixes</li>
+	</ul>
+	
+</div>
