@@ -60,55 +60,80 @@
     </div>
 </div>
 
-
-
-<script type="text/javascript">
-        $(document).ready(function () {
-
-            var callForResponse = function () {
-                $.ajax({
-                    // type: 'get',
-                    //url: "/DesktopModules/MVC/YourModuleName/controllerName/actionName",
-                    url: "/DesktopModules/MVC/QuestionModule/Question/GetJsonResult",
-                    method: "Get",
-                    contentType: 'application/json',
-                    headers: {
-                        "ModuleId": @Dnn.ModuleContext.ModuleId,
-                        "TabId":@Dnn.ModuleContext.TabId,
-                        "RequestVerificationToken": $("input[name='__RequestVerificationToken']").val()
+@section scripts{
+    <script>
+        debugger
+        new Vue({
+            el: '#Questions-@Dnn.ModuleContext.ModuleId',
+            data() {
+                return {
+                    columns: [
+                        { label: 'Employee ID', field: 'EmployeeID', align: 'center', filterable: false },
+                        //{ label: 'Department Name', field: 'Dep_Name' },
+                    ],
+                    page: 1,
+                    per_page: 10,
+                    filter: '',
+                    model: {
+                        Id :'',
+                        QuestionTitle: '',
+                        QuestionType: ''
                     },
-                    success: function (data) { console.log(data) },
-                    error: function () { }
+                    baseUrl: '/DesktopModules/MVC/QuestionModule/Question',
+                    headers: {
+                        ModuleId: @Dnn.ModuleContext.ModuleId,
+                        TabId: @Dnn.ModuleContext.TabId,
+                        RequestVerificationToken: document.querySelector("input[name='__RequestVerificationToken']")?.value,
+                    }
 
-                });
-            }
-
-            callForResponse();
-
-        });
-
-    $('#Submit').on('click', function () {
-        var data = {
-            id: 1
-        };
-        $.ajax({
-            url: '/DesktopModules/MVC/QuestionModule/Question/GetTransactionInformation',
-            type: "POST",
-            data: JSON.stringify(data),
-            dataType: "JSON",
-            contentType: 'application/json; charset=utf-8',
-            headers: {
-                "ModuleId": @Dnn.ModuleContext.ModuleId,
-                "TabId":@Dnn.ModuleContext.TabId,
-                "RequestVerificationToken": $("input[name='__RequestVerificationToken']").val()
+                }
             },
-            success: function (response) {
-                console.logresponse()
-                alert(response)
+            created() {
+               this.getData();
+                // this.getCategories();
+                //this.getUnits();
             },
-            error: function (response) {
+            methods: {
+                getData() {
+                    axios.get(this.baseUrl + '/GetJsonResult', { headers: { ...this.headers } }).then(res => {
+                        console.log(res)
+                    })
+                },
+                saveData() {
+                    axios.post(this.baseUrl + '/GetTransactionInformation', this.model)
+                        .then(res => {
+                            let r = res.data;
+                            alert(r.msg);
+                            if (r.success) {
+                                this.resetForm();
+                            }
+                        })
+                },
+                editData(mod) {
+                    this.Id = mod.Id,
+                        this.QuestionTitle = mod.QuestionTitle,
+                        this.QuestionType = mod.QuestionType
+                },
+                deleteData(id) {
+                    let url = '/DesktopModules/MVC/QuestionModule/Question/GetTransactionInformation';
+                    axios.post(url, { 'id': id })
+                        .then(res => {
+                            let r = res.data;
+                            alert(r.msg);
+                            if (r.success) {
+                              //  this.getData();
+                            }
+                        })
+                },
+                resetForm() {
+                    this.model = {
+                        Id: 0,
+                        QuestionTitle: '',
+                        QuestionType: '',
+                    }
+                }
             }
-        });
-    });
+        })
+    </script>
 
-</script>
+}
