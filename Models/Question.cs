@@ -61,4 +61,16 @@ namespace Redlime.Modules.QuestionModule.Models
         ///</summary>
         public DateTime LastModifiedOnDate { get; set; } = DateTime.UtcNow;
     }
+
+    public class QuestionDTO
+    {
+        public int Id { get; set; } = -1;
+        public string QuestionTitle { get; set; }
+        public string QuestionType { get; set; }
+        //public int ModuleId { get; set; }
+        //public int CreatedByUserId { get; set; } = -1;
+        //public int LastModifiedByUserId { get; set; } = -1;
+        //public DateTime CreatedOnDate { get; set; } = DateTime.UtcNow;
+        //public DateTime LastModifiedOnDate { get; set; } = DateTime.UtcNow;
+    }
 }

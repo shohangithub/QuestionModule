@@ -140,5 +140,11 @@ namespace Redlime.Modules.QuestionModule.Controllers
                 return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult AddQuestion(QuestionDTO model)
+        {
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

@@ -45,24 +45,116 @@
             <fieldset>
                 <div class="dnnFormItem">
                     <div><label for="itemName">@Dnn.LocalizeString("lblName")</label></div>
-                    <input id="QuestionTitle" name="QuestionTitle" class="form-control" />
+                    <input id="QuestionTitle" v-model="model.QuestionTitle" name="QuestionTitle" class="form-control" />
                 </div>
                 <div class="dnnFormItem">
-                    <div><label for="itemUser">@Dnn.LocalizeString("lblAssignedUser")</label></div>
-                    @Html.DropDownList("QuestionType")
+                    <div><label for="itemUser">@Dnn.LocalizeString("lblQuestionType")</label></div>
+                    <select class="dropdown" v-model="model.QuestionType">
+                        <option value="">-- select --</option>
+                        <option v-for="item in questionTypes" :key="item.value"
+                                :value="item.value">
+                            {{item.text}}
+                        </option>
+                    </select>
                 </div>
-                <input type="hidden" id="Id" name="Id" class="" />
-                <input type="hidden" id="ModuleId" name="ModuleId" class="" />
+                <input type="hidden" id="Id" v-model="model.Id" name="Id" class="" />
+                <input type="hidden" id="ModuleId" v-model="model.Id" name="ModuleId" class="" />
             </fieldset>
         </div>
-        <button type="button" id="Submit" class="dnnPrimaryAction">@Dnn.LocalizeString("Submit")</button>
+        <button type="button" id="Submit" @@click="saveData" class="dnnPrimaryAction">@Dnn.LocalizeString("Submit")</button>
         <a id="cancelEdit" href="#" class="dnnSecondaryAction">@Dnn.LocalizeString("Cancel")</a>
     </div>
 </div>
 
 @section scripts{
     <script>
-        debugger
+
+        const { createApp, ref } = Vue
+        createApp({
+            data() {
+                return {
+                    columns: [
+                        { label: 'Employee ID', field: 'EmployeeID', align: 'center', filterable: false },
+                        //{ label: 'Department Name', field: 'Dep_Name' },
+                    ],
+                    page: 1,
+                    per_page: 10,
+                    filter: '',
+                    model: {
+                        Id :'',
+                        QuestionTitle: '',
+                        QuestionType: ''
+                    },
+                    baseUrl: '/DesktopModules/MVC/QuestionModule/Question',
+                    headers: {
+                        ModuleId: @Dnn.ModuleContext.ModuleId,
+                        TabId: @Dnn.ModuleContext.TabId,
+                        RequestVerificationToken: document.querySelector("input[name='__RequestVerificationToken']")?.value,
+                    },
+                    questionTypes: [{ text: "True Or False", value: "TRUE_FALSE" }, { text: "Multiple Choice", value : "MULTIPLE_CHOICE" }]
+
+                }
+            },
+            created() {
+               this.getData();
+            },
+            methods: {
+                getData() {
+                    axios.get(this.baseUrl + '/GetJsonResult', { headers: { ...this.headers } }).then(res => {
+                        console.log(res)
+                    })
+                },
+                addQuestion() {
+                    debugger
+                    const x = this.model
+                    axios.post(this.baseUrl + '/AddQuestion', this.model)
+                        .then(res => {
+                            debugger
+                            let r = res.data;
+                            alert(r.msg);
+                            if (r.success) {
+                                this.resetForm();
+                            }
+                        })
+                },
+                saveData() {
+                    const z = { id: 1 }
+                    axios.post(this.baseUrl + '/GetTransactionInformation', JSON.stringify(z))
+                        .then(res => {
+                            let r = res.data;
+                            alert(r.msg);
+                            if (r.success) {
+                                this.resetForm();
+                            }
+                        })
+                },
+                editData(mod) {
+                    this.Id = mod.Id,
+                        this.QuestionTitle = mod.QuestionTitle,
+                        this.QuestionType = mod.QuestionType
+                },
+                deleteData(id) {
+                    let url = '/DesktopModules/MVC/QuestionModule/Question/GetTransactionInformation';
+                    axios.post(url, { 'id': id })
+                        .then(res => {
+                            let r = res.data;
+                            alert(r.msg);
+                            if (r.success) {
+                                //  this.getData();
+                            }
+                        })
+                },
+                resetForm() {
+                    this.model = {
+                        Id: 0,
+                        QuestionTitle: '',
+                        QuestionType: '',
+                    }
+                }
+            }
+        }).mount('#Questions-@Dnn.ModuleContext.ModuleId');
+
+        @*debugger
         new Vue({
             el: '#Questions-@Dnn.ModuleContext.ModuleId',
             data() {
@@ -99,6 +191,17 @@
                         console.log(res)
                     })
                 },
+                addQuestion() {
+                    axios.post(this.baseUrl + '/AddQuestion', this.model)
+                        .then(res => {
+                            debugger
+                            let r = res.data;
+                            alert(r.msg);
+                            if (r.success) {
+                                this.resetForm();
+                            }
+                        })
+                },
                 saveData() {
                     axios.post(this.baseUrl + '/GetTransactionInformation', this.model)
                         .then(res => {
@@ -133,7 +236,7 @@
                     }
                 }
             }
-        })
+        })*@
     </script>
 
 }

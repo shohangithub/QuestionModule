@@ -138,8 +138,8 @@
   <data name="ExpandAll.Text" xml:space="preserve">
     <value>Expand All</value>
   </data>
-  <data name="lblAssignedUser.Text" xml:space="preserve">
-    <value>Assigned User</value>
+  <data name="lblQuestionType.Text" xml:space="preserve">
+    <value>Question Type</value>
   </data>
   <data name="lblDescription.Text" xml:space="preserve">
     <value>Description</value>
