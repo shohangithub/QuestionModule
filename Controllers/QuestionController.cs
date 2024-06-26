@@ -20,7 +20,9 @@ using Redlime.Modules.QuestionModule.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 
 namespace Redlime.Modules.QuestionModule.Controllers
 {
@@ -28,11 +30,7 @@ namespace Redlime.Modules.QuestionModule.Controllers
     public class QuestionController : DnnController
     {
 
-        public ActionResult Delete(int itemId)
-        {
-            QuestionManager.Instance.DeleteQuestion(itemId, ModuleContext.ModuleId);
-            return RedirectToDefaultRoute();
-        }
+       
 
         public ActionResult Edit(int itemId = -1)
         {
@@ -78,7 +76,7 @@ namespace Redlime.Modules.QuestionModule.Controllers
 
             //    QuestionManager.Instance.UpdateQuestion(existingQuestion);
             //}
-            return Json(true, JsonRequestBehavior.AllowGet);         
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -100,7 +98,7 @@ namespace Redlime.Modules.QuestionModule.Controllers
                 existingQuestion.LastModifiedByUserId = User.UserID;
                 existingQuestion.LastModifiedOnDate = DateTime.UtcNow;
                 existingQuestion.QuestionTitle = item.QuestionTitle;
-             
+
                 QuestionManager.Instance.UpdateQuestion(existingQuestion);
             }
 
@@ -125,8 +123,8 @@ namespace Redlime.Modules.QuestionModule.Controllers
             {
                 Data = new
                 {
-                  Name="Shohan",
-                  Number="01854263181"
+                    Name = "Shohan",
+                    Number = "01854263181"
                 },
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
@@ -136,15 +134,73 @@ namespace Redlime.Modules.QuestionModule.Controllers
         [HttpPost]
         public JsonResult GetTransactionInformation(long id)
         {
-                var jsonData = new { success = false, message = "Current Account Not Found! Please Try Again." };
-                return Json(jsonData, JsonRequestBehavior.AllowGet);
+            var jsonData = new { success = false, message = "Current Account Not Found! Please Try Again." };
+            return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public JsonResult AddQuestion(QuestionDTO model)
+        public JsonResult AddQuestion(Question obj)
         {
-            return Json(model, JsonRequestBehavior.AllowGet);
+            obj.ModuleId = ModuleContext.ModuleId;
+
+
+            bool response;
+            if (obj.Id == 0)
+            {
+                obj.CreatedByUserId = User?.UserID ?? -1;
+                obj.CreatedOnDate = DateTime.UtcNow;
+                response = QuestionManager.Instance.CreateQuestion(obj);
+            }
+            else
+            {
+
+                obj.LastModifiedByUserId = User?.UserID ?? -1;
+                obj.LastModifiedOnDate = DateTime.UtcNow;
+                response = QuestionManager.Instance.UpdateQuestion(obj);
+            }
+            var jsonData = new { success = response, payload = obj, message = response ? "Operation successfull." : "Operation Failed." };
+            return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult Get(int id)
+        {
+            var data = QuestionManager.Instance.GetQuestion(id, ModuleContext.ModuleId);
+            if (data != null)
+            {
+                var obj = new
+                {
+                    success = true,
+                    data.QuestionTitle,
+                    data.QuestionType,
+                    data.Id,
+                };
+                return Json(obj, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var obj = new { success = false, msg = "Operation Failed !" };
+                return Json(obj, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetList()
+        {
+            var obj = QuestionManager.Instance.GetQuestions(ModuleContext.ModuleId).AsEnumerable().Select(x => new
+            {
+                x.Id,
+                x.QuestionTitle,
+                x.QuestionType,
+            });
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+        [HttpDelete]
+        public JsonResult Delete(int id)
+        {
+           var response = QuestionManager.Instance.DeleteQuestion(id, ModuleContext.ModuleId);
+            var obj = new { success = response, msg = response? "Data deleted succesfully !": "Operation Failed !" };
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
     }
 }

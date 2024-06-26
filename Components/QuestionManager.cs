@@ -13,42 +13,59 @@
 using DotNetNuke.Data;
 using DotNetNuke.Framework;
 using Redlime.Modules.QuestionModule.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Redlime.Modules.QuestionModule.Components
 {
     internal interface IQuestionManager
     {
-        void CreateQuestion(Question t);
-        void DeleteQuestion(int itemId, int moduleId);
+        bool CreateQuestion(Question t);
+        bool DeleteQuestion(int itemId, int moduleId);
         void DeleteQuestion(Question t);
         IEnumerable<Question> GetQuestions(int moduleId);
         Question GetQuestion(int itemId, int moduleId);
-        void UpdateQuestion(Question t);
+        bool UpdateQuestion(Question t);
     }
 
     internal class QuestionManager : ServiceLocator<IQuestionManager, QuestionManager>, IQuestionManager
     {
-        public void CreateQuestion(Question t)
+        public bool CreateQuestion(Question t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            try
             {
-               
-                var rep = ctx.GetRepository<Question>();
+                using (IDataContext ctx = DataContext.Instance())
+                {
 
-                rep.Insert(t);
-                //var answer = ctx.GetRepository<QuestionAnswer>();
-                //foreach (var item in t.Questions)
-                //{
-                //    answer.Insert(item);
-                //}
+                    var rep = ctx.GetRepository<Question>();
+
+                    rep.Insert(t);
+                    //var answer = ctx.GetRepository<QuestionAnswer>();
+                    //foreach (var item in t.Questions)
+                    //{
+                    //    answer.Insert(item);
+                    //}
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
 
-        public void DeleteQuestion(int itemId, int moduleId)
+        public bool DeleteQuestion(int itemId, int moduleId)
         {
-            var t = GetQuestion(itemId, moduleId);
-            DeleteQuestion(t);
+            try
+            {
+                var t = GetQuestion(itemId, moduleId);
+                DeleteQuestion(t);
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
         public void DeleteQuestion(Question t)
@@ -82,12 +99,20 @@ namespace Redlime.Modules.QuestionModule.Components
             return t;
         }
 
-        public void UpdateQuestion(Question t)
+        public bool UpdateQuestion(Question t)
         {
-            using (IDataContext ctx = DataContext.Instance())
+            try
             {
-                var rep = ctx.GetRepository<Question>();
-                rep.Update(t);
+                using (IDataContext ctx = DataContext.Instance())
+                {
+                    var rep = ctx.GetRepository<Question>();
+                    rep.Update(t);
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
 

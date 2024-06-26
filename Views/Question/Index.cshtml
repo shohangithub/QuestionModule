@@ -5,64 +5,74 @@
 
 
 <div id="Questions-@Dnn.ModuleContext.ModuleId">
-    @if (Model == null || Model.Count() == 0)
-    {
-        <p>@Dnn.LocalizeString("NoItems")</p>
-    }
-    else
-    {
-        <a href="@Url.Action("Edit", "Question", new { ctl = "Edit",itemId = -1})">Add Question</a>
-        <ul class="tm_tl">
-            @foreach (var item in Model)
-            {
-                <li class="tm_t">
 
-                    <h3>@item.QuestionTitle</h3>
-                    <div class="tm_td">@item.QuestionType</div>
-                    @Dnn.ModuleContext.IsEditable
-                    @{
-                        if (Dnn.ModuleContext.IsEditable)
-                        {
-                            <div>
-                                <a href="@Url.Action("Edit", "Question", new {ctl = "Edit", itemId = item.Id})">@Dnn.LocalizeString("EditQuestion")</a>
-                                <a href="@Url.Action("Delete", "Question", new {itemId = item.Id})">@Dnn.LocalizeString("DeleteQuestion")</a>
-                            </div>
-                        }
-                    }
-                </li>
-            }
-        </ul>
-    }
+    <div class="col-md-12">
+        <div class="col-md-4" style="border: 1px solid gray">
+            <div id="add-form" style="margin:5px;">
+                <fieldset>
+                    <input type="hidden" id="Id" v-model="model.Id" name="Id" class="" />
+                    <input type="hidden" id="ModuleId" v-model="model.Id" name="ModuleId" class="" />
+                    <div class="dnnFormItem">
+                        <div><label for="itemName">@Dnn.LocalizeString("lblName")</label></div>
+                        <input id="QuestionTitle" v-model="model.QuestionTitle" name="QuestionTitle" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="itemUser">@Dnn.LocalizeString("lblQuestionType")</label>
+                        <select class="form-control" v-model="model.QuestionType">
+                            <option value="">-- select --</option>
+                            <option v-for="item in questionTypes" :key="item.value"
+                                    :value="item.value">
+                                {{item.text}}
+                            </option>
+                        </select>
+                    </div>
+                </fieldset>
 
-
-    <div id="add-form">
-        <div class="dnnForm dnnEditBasicSettings" id="dnnEditBasicSettings">
-            <div class="dnnFormExpandContent dnnRight "><a href="#">@Dnn.LocalizeString("ExpandAll")</a></div>
-
-            <h2 id="dnnSitePanel-BasicSettings" class="dnnFormSectionHead dnnClear">
-                <a href="#" class="dnnSectionExpanded">@Dnn.LocalizeString("BasicSettings")</a>
-            </h2>
-            <fieldset>
-                <div class="dnnFormItem">
-                    <div><label for="itemName">@Dnn.LocalizeString("lblName")</label></div>
-                    <input id="QuestionTitle" v-model="model.QuestionTitle" name="QuestionTitle" class="form-control" />
+                <div class="form-group row">
+                    <div class="col-md-offset-8 col-md-4" align="right">
+                        <button type="button" name="btnSubmit" @@click="addQuestion" title="Save" class="btn btn-primary btn-block">
+                            <span v-if="model.Id == 0">Save</span>
+                            <span v-if="model.Id != 0">Update</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="dnnFormItem">
-                    <div><label for="itemUser">@Dnn.LocalizeString("lblQuestionType")</label></div>
-                    <select class="dropdown" v-model="model.QuestionType">
-                        <option value="">-- select --</option>
-                        <option v-for="item in questionTypes" :key="item.value"
-                                :value="item.value">
-                            {{item.text}}
-                        </option>
-                    </select>
-                </div>
-                <input type="hidden" id="Id" v-model="model.Id" name="Id" class="" />
-                <input type="hidden" id="ModuleId" v-model="model.Id" name="ModuleId" class="" />
-            </fieldset>
+            </div>
         </div>
-        <button type="button" id="Submit" @@click="saveData" class="dnnPrimaryAction">@Dnn.LocalizeString("Submit")</button>
-        <a id="cancelEdit" href="#" class="dnnSecondaryAction">@Dnn.LocalizeString("Cancel")</a>
+        <div class="col-md-8">
+            @if (Model == null || Model.Count() == 0)
+            {
+                <p>@Dnn.LocalizeString("NoItems")</p>
+            }
+            else
+            {
+
+
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Question</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="item in rows" :key="item.value">
+                            <td>{{item.QuestionTitle}}</td>
+                            <td>{{item.QuestionType}}</td>
+                            <td>
+                                <div>
+                                    <button type="button" class="btn btn-warning btn-sm" style="margin:0 1px" @@click="getById(item.Id)">@Dnn.LocalizeString("EditQuestion")</button>
+                                    <button type="button" class="btn btn-danger btn-sm" style="margin:0 1px" @@click="deleteQuestion(item.Id)">@Dnn.LocalizeString("DeleteQuestion")</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            }
+
+        </div>
     </div>
 </div>
 
@@ -73,18 +83,19 @@
         createApp({
             data() {
                 return {
-                    columns: [
-                        { label: 'Employee ID', field: 'EmployeeID', align: 'center', filterable: false },
-                        //{ label: 'Department Name', field: 'Dep_Name' },
-                    ],
+                    //columns: [
+                    //    { label: 'Employee ID', field: 'EmployeeID', align: 'center', filterable: false },
+                    //    //{ label: 'Department Name', field: 'Dep_Name' },
+                    //],
                     page: 1,
                     per_page: 10,
                     filter: '',
                     model: {
-                        Id :'',
+                        Id :0,
                         QuestionTitle: '',
                         QuestionType: ''
                     },
+                    rows: [],
                     baseUrl: '/DesktopModules/MVC/QuestionModule/Question',
                     headers: {
                         ModuleId: @Dnn.ModuleContext.ModuleId,
@@ -92,7 +103,6 @@
                         RequestVerificationToken: document.querySelector("input[name='__RequestVerificationToken']")?.value,
                     },
                     questionTypes: [{ text: "True Or False", value: "TRUE_FALSE" }, { text: "Multiple Choice", value : "MULTIPLE_CHOICE" }]
-
                 }
             },
             created() {
@@ -100,49 +110,34 @@
             },
             methods: {
                 getData() {
-                    axios.get(this.baseUrl + '/GetJsonResult', { headers: { ...this.headers } }).then(res => {
-                        console.log(res)
+                    axios.get(this.baseUrl + '/GetList', { headers: { ...this.headers } }).then(res => {
+                        this.rows = res.data;
+                    })
+                },
+                getById(id) {
+                    axios.get(this.baseUrl + '/Get?id=' + id, { headers: { ...this.headers } }).then(res => {
+                        this.model = res.data;
                     })
                 },
                 addQuestion() {
-                    debugger
-                    const x = this.model
-                    axios.post(this.baseUrl + '/AddQuestion', this.model)
-                        .then(res => {
-                            debugger
-                            let r = res.data;
-                            alert(r.msg);
-                            if (r.success) {
+                    axios.post(this.baseUrl + '/AddQuestion', this.model, { headers: { ...this.headers } })
+                        .then(response => {
+                            const res = response.data;
+                            alert(res.message);
+                            if (res.success) {
+                                this.getData();
                                 this.resetForm();
                             }
                         })
                 },
-                saveData() {
-                    const z = { id: 1 }
-                    axios.post(this.baseUrl + '/GetTransactionInformation', JSON.stringify(z))
-                        .then(res => {
-                            let r = res.data;
-                            alert(r.msg);
-                            if (r.success) {
-                                this.resetForm();
-                            }
-                        })
-                },
-                editData(mod) {
-                    this.Id = mod.Id,
-                        this.QuestionTitle = mod.QuestionTitle,
-                        this.QuestionType = mod.QuestionType
-                },
-                deleteData(id) {
-                    let url = '/DesktopModules/MVC/QuestionModule/Question/GetTransactionInformation';
-                    axios.post(url, { 'id': id })
-                        .then(res => {
-                            let r = res.data;
-                            alert(r.msg);
-                            if (r.success) {
-                                //  this.getData();
-                            }
-                        })
+                deleteQuestion(id) {
+                    axios.delete(this.baseUrl + '/Delete', { data: {id:id},headers: { ...this.headers } }).then(res => {
+                        let r = res.data;
+                        alert(r.msg);
+                        if (r.success) {
+                              this.getData();
+                        }
+                    })
                 },
                 resetForm() {
                     this.model = {
