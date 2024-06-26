@@ -54,7 +54,7 @@
                             <div>
                                 <button type="button" class="btn btn-warning btn-sm" style="margin:0 1px" @@click="getById(item.Id)">@Dnn.LocalizeString("EditQuestion")</button>
                                 <button type="button" class="btn btn-danger btn-sm" style="margin:0 1px" @@click="deleteQuestion(item.Id)">@Dnn.LocalizeString("DeleteQuestion")</button>
-                                <button type="button" class="btn btn-primary btn-sm" style="margin:0 1px" @@click="showOptions(item)"><span v-if="isShowOptions">Hide</span><span v-else >Show</span> Options</button>
+                                <button type="button" class="btn btn-primary btn-sm" style="margin:0 1px" @@click="showOptions(item)"><span v-if="isShowOptions">Hide</span><span v-else>Show</span> Options</button>
                             </div>
                         </td>
                     </tr>
@@ -65,23 +65,28 @@
 
     <div class="col-md-12">
         <template v-if="isShowOptions">
-            <h2>{{optionModel.QuestionTitle}}</h2>
+            <hr/>
+            <h3>{{optionModel.QuestionTitle}}</h3>
             <div class="col-md-12">
                 <div class="col-md-4" style="border: 1px solid gray">
                     <div id="add-option-form" style="margin:5px;">
                         <fieldset>
-                            <input type="hidden" id="Id" v-model="optionModel.Id" name="Id" class="" />
+                            <input type="hidden" id="Id" v-model="questionOption.Id" name="Id" class="" />
                             <div class="dnnFormItem">
-                                <div><label for="itemName">@Dnn.LocalizeString("lblName")</label></div>
-                                <input id="QuestionTitle" v-model="model.QuestionTitle" name="QuestionTitle" class="form-control" />
+                                <div><label for="OptionLabel">Option Name</label></div>
+                                <input id="QuestionTitle" v-model="questionOption.OptionLabel" name="OptionLabel" class="form-control" />
+                            </div>
+                            <div class="dnnFormItem">
+                                <div><label for="OptionImageUrl">Image Url</label></div>
+                                <input id="QuestionTitle" v-model="questionOption.OptionImageUrl" name="OptionImageUrl" class="form-control" />
                             </div>
                             <div class="form-group">
-                                <label for="itemUser">@Dnn.LocalizeString("lblQuestionType")</label>
-                                <select class="form-control" v-model="model.QuestionType">
+                                <label for="itemUser">Dependent Question</label>
+                                <select class="form-control" v-model="questionOption.DependentQuestionId">
                                     <option value="">-- select --</option>
-                                    <option v-for="item in questionTypes" :key="item.value"
-                                            :value="item.value">
-                                        {{item.text}}
+                                    <option v-for="item in rows" :key="item.value"
+                                            :value="item.Id">
+                                        {{item.QuestionTitle}}
                                     </option>
                                 </select>
                             </div>
@@ -89,9 +94,9 @@
 
                         <div class="form-group row">
                             <div class="col-md-offset-8 col-md-4" align="right">
-                                <button type="button" name="btnSubmit" @@click="addQuestion" title="Save" class="btn btn-primary btn-block">
-                                    <span v-if="model.Id == 0">Save</span>
-                                    <span v-if="model.Id != 0">Update</span>
+                                <button type="button" name="btnSubmit" @@click="addQuestionOption" title="Save" class="btn btn-primary btn-block">
+                                    <span v-if="questionOption.Id == 0">Add </span>
+                                    <span v-if="questionOption.Id != 0">Update </span>
                                 </button>
                             </div>
                         </div>
@@ -101,21 +106,20 @@
                     <table class="table table-bordered">
                         <thead class="thead-dark">
                             <tr>
-                                <th>Question</th>
-                                <th>Type</th>
+                                <th>Option</th>
+                                <th>Image</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             <tr v-for="item in optionRows" :key="item.value">
-                                <td>{{item.QuestionTitle}}</td>
-                                <td>{{item.QuestionType}}</td>
+                                <td>{{item.OptionLabel}}</td>
+                                <td>{{item.OptionImageUrl}}</td>
                                 <td>
                                     <div>
-                                        <button type="button" class="btn btn-warning btn-sm" style="margin:0 1px" @@click="getById(item.Id)">@Dnn.LocalizeString("EditQuestion")</button>
-                                        <button type="button" class="btn btn-danger btn-sm" style="margin:0 1px" @@click="deleteQuestion(item.Id)">@Dnn.LocalizeString("DeleteQuestion")</button>
-                                        <button type="button" class="btn btn-primary btn-sm" style="margin:0 1px" @@click="showOptions(item)"><span v-if="isShowOptions">Hide</span><span v-else>Show</span> Options</button>
+                                        <button type="button" class="btn btn-warning btn-sm" style="margin:0 1px" @@click="getOptionById(item.Id)">@Dnn.LocalizeString("EditQuestion")</button>
+                                        <button type="button" class="btn btn-danger btn-sm" style="margin:0 1px" @@click="deleteQuestionOption(item.Id)">@Dnn.LocalizeString("DeleteQuestion")</button>
                                     </div>
                                 </td>
                             </tr>
@@ -155,9 +159,15 @@
                     },
                     questionTypes: [{ text: "Text", value: "TEXT" },{ text: "True Or False", value: "TRUE_FALSE" }, { text: "Multiple Choice", value : "MULTIPLE_CHOICE" }],
 
-
                     isShowOptions: false,
                     optionModel: {},
+                    questionOption: {
+                        Id: 0,
+                        QuestionId: 0,
+                        OptionLabel: '',
+                        OptionImageUrl: '',
+                        DependentQuestionId: null
+                    },
                     optionRows: [],
 
                 }
@@ -206,14 +216,62 @@
 
                 //Question options
                 showOptions(item) {
+                    if (!this.isShowOptions) {
+                        this.optionModel = item;
+                        this.getQuestionOptions();
+                        this.questionOption.QuestionId = item.Id;
+
+                    } else {
+                        this.questionOption.QuestionId = 0;
+                        this.optionModel = {};
+                    }
                     this.isShowOptions = !this.isShowOptions;
-                    this.optionModel = item;
-                }
+                },
+                getQuestionOptions() {
+                    axios.get(this.baseUrl + '/QuestionOptions?QuestionId=' + this.optionModel.Id, { headers: { ...this.headers } }).then(res => {
+                        this.optionRows = res.data;
+                    })
+                },
+                getOptionById(id) {
+                    axios.get(this.baseUrl + '/GetOption?id=' + id, { headers: { ...this.headers } }).then(res => {
+                        this.questionOption = res.data;
+                    })
+                },
+                addQuestionOption() {
+                    axios.post(this.baseUrl + '/AddQuestionOption', this.questionOption, { headers: { ...this.headers } })
+                        .then(response => {
+                            const res = response.data;
+                            alert(res.message);
+                            if (res.success) {
+                                this.getQuestionOptions();
+                                this.resetOptionForm();
+                                this.questionOption.QuestionId = this.optionModel.Id;
+                            }
+                        })
+                },
+                deleteQuestionOption(id) {
+                    axios.delete(this.baseUrl + '/DeleteOption', { data: { id: id }, headers: { ...this.headers } }).then(res => {
+                        let r = res.data;
+                        alert(r.msg);
+                        if (r.success) {
+                            this.getQuestionOptions();
+                        }
+                    })
+                },
+                resetOptionForm() {
+                    this.questionOption = {
+                        Id: 0,
+                        QuestionId: 0,
+                        OptionLabel: '',
+                        OptionImageUrl: '',
+                        DependentQuestionId: null
+                    }
+                },
 
             }
         }).mount('#Questions-@Dnn.ModuleContext.ModuleId');
 
-       
+
     </script>
 
 }

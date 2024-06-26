@@ -202,5 +202,78 @@ namespace Redlime.Modules.QuestionModule.Controllers
             var obj = new { success = response, msg = response? "Data deleted succesfully !": "Operation Failed !" };
             return Json(obj, JsonRequestBehavior.AllowGet);
         }
+
+
+        [HttpGet]
+        public JsonResult QuestionOptions(int QuestionId)
+        {
+            var obj = QuestionOptionManager.Instance.GetQuestionOptions(QuestionId,ModuleContext.ModuleId).AsEnumerable().Select(x => new
+            {
+                x.Id,
+                x.QuestionId,
+                x.OptionLabel,
+                x.OptionImageUrl,
+                x.DependentQuestionId,
+            });
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public JsonResult AddQuestionOption(QuestionOption obj)
+        {
+            obj.ModuleId = ModuleContext.ModuleId;
+
+
+            bool response;
+            if (obj.Id == 0)
+            {
+                obj.CreatedByUserId = User?.UserID ?? -1;
+                obj.CreatedOnDate = DateTime.UtcNow;
+                response = QuestionOptionManager.Instance.CreateQuestionOption(obj);
+            }
+            else
+            {
+
+                obj.LastModifiedByUserId = User?.UserID ?? -1;
+                obj.LastModifiedOnDate = DateTime.UtcNow;
+                response = QuestionOptionManager.Instance.UpdateQuestionOption(obj);
+            }
+            var jsonData = new { success = response, payload = obj, message = response ? "Operation successfull." : "Operation Failed." };
+            return Json(jsonData, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        [HttpGet]
+        public JsonResult GetOption(int id)
+        {
+            var data = QuestionOptionManager.Instance.GetQuestionOption(id, ModuleContext.ModuleId);
+            if (data != null)
+            {
+                var obj = new
+                {
+                    success = true,
+                    data.OptionLabel,
+                    data.QuestionId,
+                    data.DependentQuestionId,
+                    data.OptionImageUrl,
+                    data.Id,
+                };
+                return Json(obj, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var obj = new { success = false, msg = "Operation Failed !" };
+                return Json(obj, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpDelete]
+        public JsonResult DeleteOption(int id)
+        {
+            var response = QuestionOptionManager.Instance.DeleteQuestionOption(id, ModuleContext.ModuleId);
+            var obj = new { success = response, msg = response ? "Data deleted succesfully !" : "Operation Failed !" };
+            return Json(obj, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

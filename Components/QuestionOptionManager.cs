@@ -15,6 +15,7 @@ using DotNetNuke.Framework;
 using Redlime.Modules.QuestionModule.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Redlime.Modules.QuestionModule.Components
 {
@@ -23,7 +24,7 @@ namespace Redlime.Modules.QuestionModule.Components
         bool CreateQuestionOption(QuestionOption t);
         bool DeleteQuestionOption(int itemId, int moduleId);
         void DeleteQuestionOption(QuestionOption t);
-        IEnumerable<QuestionOption> GetQuestionOptions(int moduleId);
+        IEnumerable<QuestionOption> GetQuestionOptions(int questionId, int moduleId);
         QuestionOption GetQuestionOption(int itemId, int moduleId);
         bool UpdateQuestionOption(QuestionOption t);
     }
@@ -77,13 +78,13 @@ namespace Redlime.Modules.QuestionModule.Components
             }
         }
 
-        public IEnumerable<QuestionOption> GetQuestionOptions(int moduleId)
+        public IEnumerable<QuestionOption> GetQuestionOptions(int questionId, int moduleId)
         {
             IEnumerable<QuestionOption> t;
             using (IDataContext ctx = DataContext.Instance())
             {
                 var rep = ctx.GetRepository<QuestionOption>();
-                t = rep.Get(moduleId);
+                t = rep.Get(moduleId).AsEnumerable().Where(x => x.QuestionId == questionId);
             }
             return t;
         }

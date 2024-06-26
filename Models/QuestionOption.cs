@@ -29,10 +29,9 @@ namespace Redlime.Modules.QuestionModule.Models
         
         public int Id { get; set; } = -1;
         public int QuestionId { get; set; }
-        public virtual Question Question { get; set; }
         public string OptionLabel { get; set; }
         public string OptionImageUrl { get; set; }
-        public int DependentQuestionId { get; set; }
+        public int? DependentQuestionId { get; set; }
 
 
 
