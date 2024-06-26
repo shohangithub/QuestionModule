@@ -108,13 +108,7 @@ namespace Redlime.Modules.QuestionModule.Controllers
         [ModuleAction(ControlKey = "Edit", TitleKey = "AddQuestion")]
         public ActionResult Index()
         {
-            ViewBag.QuestionType = new List<SelectListItem>
-            {
-                 new SelectListItem {Text = "True Or False",Value = "TRUE_FALSE"  },
-                 new SelectListItem {Text = "Multiple Choice",Value = "MULTIPLE_CHOICE"  }
-            };
-            var items = QuestionManager.Instance.GetQuestions(ModuleContext.ModuleId);
-            return View(items);
+            return View();
         }
 
         public JsonResult GetJsonResult()

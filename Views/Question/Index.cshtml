@@ -1,6 +1,4 @@
-﻿@inherits DotNetNuke.Web.Mvc.Framework.DnnWebViewPage<IEnumerable<Redlime.Modules.QuestionModule.Models.Question>>
-
-@using System.Text.RegularExpressions
+﻿@using System.Text.RegularExpressions
 @using DotNetNuke.Web.Mvc.Helpers
 
 
@@ -39,39 +37,28 @@
             </div>
         </div>
         <div class="col-md-8">
-            @if (Model == null || Model.Count() == 0)
-            {
-                <p>@Dnn.LocalizeString("NoItems")</p>
-            }
-            else
-            {
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Question</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Question</th>
-                            <th>Type</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr v-for="item in rows" :key="item.value">
-                            <td>{{item.QuestionTitle}}</td>
-                            <td>{{item.QuestionType}}</td>
-                            <td>
-                                <div>
-                                    <button type="button" class="btn btn-warning btn-sm" style="margin:0 1px" @@click="getById(item.Id)">@Dnn.LocalizeString("EditQuestion")</button>
-                                    <button type="button" class="btn btn-danger btn-sm" style="margin:0 1px" @@click="deleteQuestion(item.Id)">@Dnn.LocalizeString("DeleteQuestion")</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            }
-
+                <tbody>
+                    <tr v-for="item in rows" :key="item.value">
+                        <td>{{item.QuestionTitle}}</td>
+                        <td>{{item.QuestionType}}</td>
+                        <td>
+                            <div>
+                                <button type="button" class="btn btn-warning btn-sm" style="margin:0 1px" @@click="getById(item.Id)">@Dnn.LocalizeString("EditQuestion")</button>
+                                <button type="button" class="btn btn-danger btn-sm" style="margin:0 1px" @@click="deleteQuestion(item.Id)">@Dnn.LocalizeString("DeleteQuestion")</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -102,7 +89,7 @@
                         TabId: @Dnn.ModuleContext.TabId,
                         RequestVerificationToken: document.querySelector("input[name='__RequestVerificationToken']")?.value,
                     },
-                    questionTypes: [{ text: "True Or False", value: "TRUE_FALSE" }, { text: "Multiple Choice", value : "MULTIPLE_CHOICE" }]
+                    questionTypes: [{ text: "Text", value: "TEXT" },{ text: "True Or False", value: "TRUE_FALSE" }, { text: "Multiple Choice", value : "MULTIPLE_CHOICE" }]
                 }
             },
             created() {
