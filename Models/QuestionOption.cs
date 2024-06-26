@@ -17,26 +17,26 @@ using System.Web.Caching;
 
 namespace Redlime.Modules.QuestionModule.Models
 {
-    [TableName("QuestionModule_QuestionAnswers")]
+    [TableName("QuestionModule_QuestionOptions")]
     //setup the primary key for table
     [PrimaryKey("Id", AutoIncrement = true)]
     //configure caching using PetaPoco
-    [Cacheable("QuestionAnswers", CacheItemPriority.Default, 20)]
+    [Cacheable("QuestionOptions", CacheItemPriority.Default, 20)]
     //scope the objects to the ModuleId of a module on a page (or copy of a module on a page)
     [Scope("ModuleId")]
-    public class QuestionAnswer
+    public class QuestionOption
     {
-        ///<summary>
-        /// The ID of your object with the name of the QuestionName
-        ///</summary>
+        
         public int Id { get; set; } = -1;
         public int QuestionId { get; set; }
         public virtual Question Question { get; set; }
+        public string OptionLabel { get; set; }
+        public string OptionImageUrl { get; set; }
+        public int DependentQuestionId { get; set; }
 
-        ///<summary>
-        /// A string with the name of the QuestionName
-        ///</summary>
-        public string AnswerLabel { get; set; }
+
+
+
 
         ///<summary>
         /// The ModuleId of where the object was created and gets displayed

@@ -9,8 +9,8 @@
 /************************************************************/
 
 
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}QuestionModule_QuestionAnswers]') AND type in (N'U'))
-DROP TABLE {databaseOwner}[{objectQualifier}QuestionModule_QuestionAnswers]
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}QuestionModule_QuestionOptions]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}QuestionModule_QuestionOptions]
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}QuestionModule_Questions]') AND type in (N'U'))
@@ -45,11 +45,13 @@ GO
 
 
 
-CREATE TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionAnswers
+CREATE TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionOptions
     (
     Id int NOT NULL IDENTITY (1, 1),
     QuestionId int NULL,
-    AnswerLabel nvarchar(MAX) NOT NULL,
+    OptionLabel nvarchar(MAX) NOT NULL,
+    OptionImageUrl nvarchar(MAX) NULL,
+    DependentQuestionId int NULL,
     ModuleId int NOT NULL,
     CreatedOnDate datetime NOT NULL,
     CreatedByUserId int NOT NULL,
@@ -60,8 +62,8 @@ CREATE TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionAnswers
 GO
 
 
-ALTER TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionAnswers ADD CONSTRAINT
-    PK_{objectQualifier}QuestionModule_QuestionAnswers PRIMARY KEY CLUSTERED 
+ALTER TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionOptions ADD CONSTRAINT
+    PK_{objectQualifier}QuestionModule_QuestionOptions PRIMARY KEY CLUSTERED 
     (
     Id
     ) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -70,7 +72,7 @@ GO
 
 
 
-ALTER TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionAnswers WITH CHECK ADD  CONSTRAINT [FK_QuestionAnswers_Answers_QuestionAnswerId] FOREIGN KEY([QuestionId])
+ALTER TABLE {databaseOwner}{objectQualifier}QuestionModule_QuestionOptions WITH CHECK ADD  CONSTRAINT [FK_QuestionOptions_Options_QuestionAnswerId] FOREIGN KEY([QuestionId])
 REFERENCES {databaseOwner}{objectQualifier}QuestionModule_Questions  ([Id])
 GO
 

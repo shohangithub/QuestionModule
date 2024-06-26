@@ -25,6 +25,42 @@
       <name>Documentation.html</name>
     </file>
     <file>
+      <path>Scripts/</path>
+      <name>axios.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>axios.min.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>modernizr-2.8.3.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>vue-datepicker.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>vue-select.min.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>vue-timepicker.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>vue.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>vue.min.js</name>
+    </file>
+    <file>
+      <path>Scripts/</path>
+      <name>vuejs-datatable.js</name>
+    </file>
+    <file>
       <path>Views/</path>
       <name>_ViewStart.cshtml</name>
     </file>

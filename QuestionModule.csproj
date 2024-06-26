@@ -104,9 +104,10 @@
       <DependentUpon>Settings.resx</DependentUpon>
     </Compile>
     <Compile Include="Components\FeatureController.cs" />
+    <Compile Include="Components\QuestionOptionManager.cs" />
     <Compile Include="Components\QuestionManager.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
-    <Compile Include="Models\QuestionAnswer.cs" />
+    <Compile Include="Models\QuestionOption.cs" />
     <Compile Include="Models\Question.cs" />
     <Compile Include="Controllers\QuestionController.cs" />
     <Compile Include="Models\Settings.cs" />

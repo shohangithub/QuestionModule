@@ -1,5 +1,5 @@
-﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}QuestionModule_QuestionAnswers]') AND type in (N'U'))
-DROP TABLE {databaseOwner}[{objectQualifier}QuestionModule_QuestionAnswers]
+﻿IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}QuestionModule_QuestionOptions]') AND type in (N'U'))
+DROP TABLE {databaseOwner}[{objectQualifier}QuestionModule_QuestionOptions]
 GO
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}QuestionModule_Questions]') AND type in (N'U'))

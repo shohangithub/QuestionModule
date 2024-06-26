@@ -30,8 +30,8 @@ namespace Redlime.Modules.QuestionModule.Controllers
     public class QuestionController : DnnController
     {
 
-       
 
+        #region UNUSED SECTION
         public ActionResult Edit(int itemId = -1)
         {
             DotNetNuke.Framework.JavaScriptLibraries.JavaScript.RequestRegistration(CommonJs.DnnPlugins);
@@ -104,6 +104,12 @@ namespace Redlime.Modules.QuestionModule.Controllers
 
             return RedirectToDefaultRoute();
         }
+
+        #endregion
+
+
+
+
 
         [ModuleAction(ControlKey = "Edit", TitleKey = "AddQuestion")]
         public ActionResult Index()

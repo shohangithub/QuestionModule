@@ -153,4 +153,7 @@
   <data name="NoItems.Text" xml:space="preserve">
     <value>No items defined.</value>
   </data>
+  <data name="QuestionOptionBtn.Text" xml:space="preserve">
+    <value>Options</value>
+  </data>
 </root>
